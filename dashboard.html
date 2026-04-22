@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Incoin Assistant</title>
+  <meta name="description" content="Manage your tasks, credits, and activity on Incoin Assistant." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body class="dash-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">⬡</span>
+        <span>Incoin <span class="logo-accent">Assistant</span></span>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-tab="overview">
+        <span class="nav-icon">⊡</span> Overview
+      </a>
+      <a href="#" class="nav-item" data-tab="tasks">
+        <span class="nav-icon">☰</span> My Tasks
+        <span class="nav-badge" id="navBadgeTasks"></span>
+      </a>
+      <a href="#" class="nav-item" data-tab="credits">
+        <span class="nav-icon">◈</span> Buy Credits
+      </a>
+      <a href="#" class="nav-item" data-tab="activity">
+        <span class="nav-icon">◷</span> Activity
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-chip" id="userChip">
+        <div class="user-avatar" id="userAvatarSidebar">—</div>
+        <div class="user-info">
+          <span class="user-name" id="sidebarName">Loading…</span>
+          <span class="user-email" id="sidebarEmail"></span>
+        </div>
+      </div>
+      <button class="btn-signout" id="signOutBtn">Sign Out</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <button class="topbar-toggle" id="sidebarToggle">☰</button>
+      <h1 class="topbar-title" id="tabTitle">Overview</h1>
+      <div class="topbar-credits">
+        <span class="credits-label">Credits</span>
+        <span class="credits-value" id="topbarCredits">—</span>
+      </div>
+    </div>
+
+    <!-- ===== TAB: OVERVIEW ===== -->
+    <section class="tab-panel active" id="tab-overview">
+      <div class="dash-grid-4">
+        <div class="stat-card">
+          <div class="stat-card-icon purple">◈</div>
+          <div>
+            <div class="stat-card-val" id="statCredits">—</div>
+            <div class="stat-card-label">Credits Available</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon blue">☰</div>
+          <div>
+            <div class="stat-card-val" id="statTasks">—</div>
+            <div class="stat-card-label">Tasks Created</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon green">✓</div>
+          <div>
+            <div class="stat-card-val" id="statCompleted">—</div>
+            <div class="stat-card-label">Tasks Completed</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon teal">₹</div>
+          <div>
+            <div class="stat-card-val" id="statSpent">—</div>
+            <div class="stat-card-label">Total Spent (₹)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Tasks & Activity side by side -->
+      <div class="dash-grid-2" style="margin-top:28px;">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>Recent Tasks</h3>
+            <a href="#" class="view-all" data-tab="tasks">View all →</a>
+          </div>
+          <div id="overviewTasks" class="item-list">
+            <div class="empty-state">No tasks yet.</div>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>Recent Activity</h3>
+            <a href="#" class="view-all" data-tab="activity">View all →</a>
+          </div>
+          <div id="overviewActivity" class="item-list">
+            <div class="empty-state">No activity yet.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: TASKS ===== -->
+    <section class="tab-panel" id="tab-tasks">
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <h3>My Tasks</h3>
+          <button class="btn btn-primary" id="newTaskBtn">+ New Task</button>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="task-stats-bar">
+          <div class="task-stat-item total">
+            <span class="task-stat-val" id="tsTotal">0</span>
+            <span class="task-stat-label">Total</span>
+          </div>
+          <div class="task-stat-item pend">
+            <span class="task-stat-val" id="tsPending">0</span>
+            <span class="task-stat-label">Pending</span>
+          </div>
+          <div class="task-stat-item prog">
+            <span class="task-stat-val" id="tsInProgress">0</span>
+            <span class="task-stat-label">In Progress</span>
+          </div>
+          <div class="task-stat-item done">
+            <span class="task-stat-val" id="tsDone">0</span>
+            <span class="task-stat-label">Completed</span>
+          </div>
+          <div class="task-completion-ring" id="completionRingWrap">
+            <svg width="48" height="48" viewBox="0 0 48 48">
+              <circle cx="24" cy="24" r="19" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="4"/>
+              <circle cx="24" cy="24" r="19" fill="none" stroke="#34d399" stroke-width="4"
+                stroke-dasharray="119.4" stroke-dashoffset="119.4"
+                stroke-linecap="round" transform="rotate(-90 24 24)"
+                id="completionArc"/>
+            </svg>
+            <span class="ring-pct" id="completionPct">0%</span>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="task-search-wrap">
+          <span class="task-search-icon">⌕</span>
+          <input type="text" id="taskSearchInput" class="task-search-input" placeholder="Search tasks by title or description…" />
+        </div>
+
+        <!-- Filter + Sort -->
+        <div class="task-filter-bar">
+          <div class="filter-tabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="pending">Pending</button>
+            <button class="filter-tab" data-filter="in_progress">In Progress</button>
+            <button class="filter-tab" data-filter="completed">Completed</button>
+          </div>
+          <select class="sort-select" id="taskSort">
+            <option value="newest">Newest first</option>
+            <option value="due_date">By due date</option>
+            <option value="priority">By priority</option>
+          </select>
+        </div>
+
+        <div id="tasksList" class="tasks-list-wrap">
+          <div class="empty-state">No tasks yet. Create one to get started.</div>
+        </div>
+      </div>
+
+      <!-- Task Modal (create & edit) -->
+      <div class="modal-overlay" id="newTaskModal">
+        <div class="modal-box" style="max-width:520px;">
+          <div class="modal-header">
+            <h3 id="taskModalTitle">Create New Task</h3>
+            <button class="modal-close" id="closeTaskModal">✕</button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Task Title</label>
+              <input type="text" id="taskTitle" placeholder="e.g. Process data batch #01" maxlength="120" />
+            </div>
+            <div class="form-group">
+              <label>Description <span class="optional">(optional)</span></label>
+              <textarea id="taskDesc" rows="2" placeholder="Brief description of the task…"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Priority</label>
+                <select id="taskPriority">
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Category</label>
+                <select id="taskCategory">
+                  <option value="general" selected>General</option>
+                  <option value="data">Data Processing</option>
+                  <option value="research">Research</option>
+                  <option value="design">Design</option>
+                  <option value="development">Development</option>
+                  <option value="writing">Writing</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Due Date <span class="optional">(optional)</span></label>
+              <input type="date" id="taskDueDate" />
+            </div>
+            <p class="form-note" id="taskCreditNote">ℹ Each task costs <strong>1 credit</strong> to create.</p>
+            <div id="taskError" class="form-error" style="display:none;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" id="cancelTaskBtn">Cancel</button>
+            <button class="btn btn-primary" id="submitTaskBtn">Create Task (1 credit)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: BUY CREDITS ===== -->
+    <section class="tab-panel" id="tab-credits">
+      <div class="plans-wrapper">
+        <!-- Starter -->
+        <div class="plan-card">
+          <div class="plan-card-header">
+            <div class="plan-card-name">Starter</div>
+            <div class="plan-card-price">₹<span>100</span></div>
+            <div class="plan-credits-badge">55 Credits</div>
+          </div>
+          <ul class="plan-card-features">
+            <li>✓ 55 credit units</li>
+            <li>✓ Task management access</li>
+            <li>✓ Activity tracking</li>
+          </ul>
+          <button class="btn btn-outline btn-block" onclick="initPayment(1,100,'Starter',55)">Buy Starter</button>
+        </div>
+        <!-- Standard -->
+        <div class="plan-card popular">
+          <div class="popular-ribbon">Most Popular</div>
+          <div class="plan-card-header">
+            <div class="plan-card-name">Standard</div>
+            <div class="plan-card-price">₹<span>200</span></div>
+            <div class="plan-credits-badge">115 Credits</div>
+          </div>
+          <ul class="plan-card-features">
+            <li>✓ 115 credit units</li>
+            <li>✓ Task management access</li>
+            <li>✓ Priority support</li>
+          </ul>
+          <button class="btn btn-primary btn-block" onclick="initPayment(2,200,'Standard',115)">Buy Standard</button>
+        </div>
+        <!-- Professional -->
+        <div class="plan-card">
+          <div class="plan-card-header">
+            <div class="plan-card-name">Professional</div>
+            <div class="plan-card-price">₹<span>500</span></div>
+            <div class="plan-credits-badge">325 Credits</div>
+          </div>
+          <ul class="plan-card-features">
+            <li>✓ 325 credit units</li>
+            <li>✓ Task management access</li>
+            <li>✓ Dedicated support</li>
+          </ul>
+          <button class="btn btn-outline btn-block" onclick="initPayment(3,500,'Professional',325)">Buy Professional</button>
+        </div>
+      </div>
+      <div class="disclaimer-card" style="max-width:720px;margin:40px auto 0;">
+        <div class="disclaimer-icon">⚠</div>
+        <div class="disclaimer-content">
+          <h3>Important Reminder</h3>
+          <ul class="disclaimer-list">
+            <li><span class="disc-icon">✕</span> Credits have no monetary value and cannot be withdrawn.</li>
+            <li><span class="disc-icon">✕</span> This is not an earning or income platform.</li>
+            <li><span class="disc-icon">✓</span> Credits unlock platform features only.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: ACTIVITY ===== -->
+    <section class="tab-panel" id="tab-activity">
+      <div class="dash-card">
+        <div class="dash-card-header">
+          <h3>Activity Log</h3>
+        </div>
+        <div id="activityList" class="item-list">
+          <div class="empty-state">No activity recorded yet.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Razorpay SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script type="module" src="dashboard.js?v=4"></script>
+</body>
+</html>

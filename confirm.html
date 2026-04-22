@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirming your account — Incoin Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .confirm-box {
+      text-align: center;
+      max-width: 420px;
+      width: 100%;
+    }
+    .confirm-logo {
+      margin-bottom: 36px;
+    }
+    .confirm-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 48px 36px;
+      box-shadow: var(--shadow-lg);
+    }
+    .confirm-icon {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 1.8rem;
+    }
+    .confirm-icon.loading {
+      background: rgba(124,58,237,0.15);
+      border: 2px solid rgba(124,58,237,0.3);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    .confirm-icon.success {
+      background: rgba(16,185,129,0.15);
+      border: 2px solid rgba(16,185,129,0.35);
+    }
+    .confirm-icon.error {
+      background: rgba(239,68,68,0.1);
+      border: 2px solid rgba(239,68,68,0.3);
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.7; transform: scale(0.97); }
+    }
+    .confirm-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .confirm-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .redirect-note {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 20px;
+    }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 3px solid rgba(124,58,237,0.25);
+      border-top-color: #7c3aed;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="confirm-box">
+  <div class="confirm-logo">
+    <a href="index.html" class="logo" style="justify-content:center; font-size:1.3rem;">
+      <span class="logo-icon">⬡</span>
+      <span>Incoin <span class="logo-accent">Assistant</span></span>
+    </a>
+  </div>
+
+  <div class="confirm-card">
+    <!-- Loading State -->
+    <div id="stateLoading">
+      <div class="confirm-icon loading">
+        <div class="spinner"></div>
+      </div>
+      <h2 class="confirm-title">Confirming your account…</h2>
+      <p class="confirm-desc">Please wait while we verify your email address.</p>
+    </div>
+
+    <!-- Success State -->
+    <div id="stateSuccess" style="display:none;">
+      <div class="confirm-icon success">✓</div>
+      <h2 class="confirm-title">Email <span class="gradient-text">Confirmed!</span></h2>
+      <p class="confirm-desc">Your account has been verified. You're being redirected to the sign in page now.</p>
+      <a href="auth.html" class="btn btn-primary" style="width:100%;justify-content:center;">
+        Go to Sign In →
+      </a>
+      <p class="redirect-note">Redirecting automatically in <span id="countdown">3</span>s…</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="stateError" style="display:none;">
+      <div class="confirm-icon error">✕</div>
+      <h2 class="confirm-title">Verification Failed</h2>
+      <p class="confirm-desc" id="errorMsg">
+        The confirmation link has expired or is invalid. Please sign up again or request a new link.
+      </p>
+      <a href="auth.html" class="btn btn-outline" style="width:100%;justify-content:center;">
+        Back to Sign In
+      </a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const supabase = createClient(
+  'https://zuqohqbkmkcxzxcnsbyr.supabase.co',
+  'sb_publishable_dTWuc6ad6xq1UDx9A_yYUQ_RNH5cuIO'
+);
+
+function show(id) {
+  ['stateLoading','stateSuccess','stateError'].forEach(s => {
+    document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
+  });
+}
+
+async function handleConfirmation() {
+  // Supabase puts the token in the URL hash as #access_token=...&type=signup
+  // or as query params ?token=...&type=signup&token_hash=...
+  const hash   = new URLSearchParams(window.location.hash.replace('#', ''));
+  const params = new URLSearchParams(window.location.search);
+
+  const tokenHash = params.get('token_hash') || hash.get('token_hash');
+  const type      = params.get('type')       || hash.get('type') || 'signup';
+  const accessToken  = hash.get('access_token');
+  const refreshToken = hash.get('refresh_token');
+
+  try {
+    if (tokenHash) {
+      // New Supabase PKCE flow
+      const { error } = await supabase.auth.verifyOtp({
+        token_hash: tokenHash,
+        type: 'email'
+      });
+      if (error) throw error;
+
+    } else if (accessToken) {
+      // Legacy implicit flow — set session from hash tokens
+      const { error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken || ''
+      });
+      if (error) throw error;
+
+    } else {
+      // No token found — probably navigated directly
+      show('stateError');
+      document.getElementById('errorMsg').textContent =
+        'No confirmation token found. Please click the link directly from your email.';
+      return;
+    }
+
+    // Immediately sign out so user has a clean sign-in experience
+    await supabase.auth.signOut();
+
+    // Show success + countdown
+    show('stateSuccess');
+    let count = 3;
+    const cd = document.getElementById('countdown');
+    const timer = setInterval(() => {
+      count--;
+      cd.textContent = count;
+      if (count <= 0) {
+        clearInterval(timer);
+        window.location.href = 'auth.html';
+      }
+    }, 1000);
+
+  } catch (err) {
+    show('stateError');
+    document.getElementById('errorMsg').textContent =
+      err.message || 'Verification failed. The link may have expired.';
+  }
+}
+
+handleConfirmation();
+</script>
+</body>
+</html>
