@@ -132,7 +132,7 @@ function updateTaskStatsBar() {
 
   const arc = document.getElementById('completionArc');
   if (arc) {
-    const circumference = 119.4;
+    const circumference = 138.2;
     arc.style.strokeDashoffset = circumference - (circumference * pct / 100);
   }
 }
@@ -211,10 +211,10 @@ function renderTasksFull(tasks, containerId) {
     const sub  = isSearch || isFiltered ? 'Try a different filter or search term.' : 'Create your first task to start tracking your work.';
     el.innerHTML = `
       <div class="task-empty-state">
-        <div class="task-empty-icon">○</div>
+        <div class="task-empty-icon">☰</div>
         <div class="task-empty-title">${msg}</div>
         <div class="task-empty-sub">${sub}</div>
-        ${!isSearch && !isFiltered ? `<button class="btn btn-primary" style="font-size:0.85rem;padding:10px 20px;" onclick="document.getElementById('newTaskBtn').click()">+ New Task</button>` : ''}
+        ${!isSearch && !isFiltered ? `<button class="btn btn-primary" style="font-size:0.85rem;padding:10px 24px;" onclick="document.getElementById('newTaskBtn').click()">+ New Task</button>` : ''}
       </div>`;
     return;
   }

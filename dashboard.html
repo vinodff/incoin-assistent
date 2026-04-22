@@ -7,8 +7,8 @@
   <meta name="description" content="Manage your tasks, credits, and activity on Incoin Assistant." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="dashboard.css?v=5" />
 </head>
 <body class="dash-body">
 
@@ -124,33 +124,54 @@
           <button class="btn btn-primary" id="newTaskBtn">+ New Task</button>
         </div>
 
-        <!-- Stats bar -->
-        <div class="task-stats-bar">
-          <div class="task-stat-item total">
-            <span class="task-stat-val" id="tsTotal">0</span>
-            <span class="task-stat-label">Total</span>
+        <!-- Stats grid -->
+        <div class="task-stats-grid">
+          <div class="ts-card total">
+            <div class="ts-card-icon">≡</div>
+            <div class="ts-card-body">
+              <span class="ts-card-val" id="tsTotal">0</span>
+              <span class="ts-card-label">Total Tasks</span>
+            </div>
           </div>
-          <div class="task-stat-item pend">
-            <span class="task-stat-val" id="tsPending">0</span>
-            <span class="task-stat-label">Pending</span>
+          <div class="ts-card pend">
+            <div class="ts-card-icon">◷</div>
+            <div class="ts-card-body">
+              <span class="ts-card-val" id="tsPending">0</span>
+              <span class="ts-card-label">Pending</span>
+            </div>
           </div>
-          <div class="task-stat-item prog">
-            <span class="task-stat-val" id="tsInProgress">0</span>
-            <span class="task-stat-label">In Progress</span>
+          <div class="ts-card prog">
+            <div class="ts-card-icon">▶</div>
+            <div class="ts-card-body">
+              <span class="ts-card-val" id="tsInProgress">0</span>
+              <span class="ts-card-label">In Progress</span>
+            </div>
           </div>
-          <div class="task-stat-item done">
-            <span class="task-stat-val" id="tsDone">0</span>
-            <span class="task-stat-label">Completed</span>
+          <div class="ts-card done">
+            <div class="ts-card-icon">✓</div>
+            <div class="ts-card-body">
+              <span class="ts-card-val" id="tsDone">0</span>
+              <span class="ts-card-label">Completed</span>
+            </div>
           </div>
-          <div class="task-completion-ring" id="completionRingWrap">
-            <svg width="48" height="48" viewBox="0 0 48 48">
-              <circle cx="24" cy="24" r="19" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="4"/>
-              <circle cx="24" cy="24" r="19" fill="none" stroke="#34d399" stroke-width="4"
-                stroke-dasharray="119.4" stroke-dashoffset="119.4"
-                stroke-linecap="round" transform="rotate(-90 24 24)"
-                id="completionArc"/>
-            </svg>
-            <span class="ring-pct" id="completionPct">0%</span>
+          <div class="ts-card ring-card">
+            <div class="task-completion-ring" id="completionRingWrap">
+              <svg width="56" height="56" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="5"/>
+                <circle cx="28" cy="28" r="22" fill="none" stroke="url(#arcGrad)" stroke-width="5"
+                  stroke-dasharray="138.2" stroke-dashoffset="138.2"
+                  stroke-linecap="round" transform="rotate(-90 28 28)"
+                  id="completionArc"/>
+                <defs>
+                  <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#7c3aed"/>
+                    <stop offset="100%" stop-color="#34d399"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span class="ring-pct" id="completionPct">0%</span>
+            </div>
+            <span class="ts-card-label" style="margin-top:6px;font-size:0.62rem;">Done Rate</span>
           </div>
         </div>
 
@@ -312,6 +333,6 @@
 
   <!-- Razorpay SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <script type="module" src="dashboard.js?v=4"></script>
+  <script type="module" src="dashboard.js?v=5"></script>
 </body>
 </html>
